@@ -1,0 +1,178 @@
+
+# Exercise 1.1
+
+	Inputting 'Get_ChildItem' into PowerShell returns the three files I currently have in my working directory 
+	(i.e. the directory where I originally opened Windows PowerShell). We see four columns: Mode, LastWriteTime, 
+	Length, and Name.
+
+	Inputting 'Get-Alias ls' returns a table with 4 columns, CommandType (For which the only value is 'Alias'),
+	Name (which says 'ls -> Get-ChildItem'), Version, and Source (which are both empty). 
+
+# Exercise 1.2
+
+	Both 'Get-Help Remove-Item' and 'Remove-Item -?' return the same output. Adding the '-Detailed' ... adds a new
+	subheading called 'PARAMETERS'. 
+
+	Adding the '-Include' parameter together with e.g. '*.txt' will allow you to filter for files with a certain
+	extension within the directory specified by '-Path'. Alternatively, we can use '-Filter' with e.g. '*.txt'.
+
+	Get-ChildItem -Recurse -Filter *.pdf 
+	==
+	ls -r -Fi *.pdf
+
+# Exercise 2.1
+
+	Inputting 'pwd' returns: D:\Code\Data Analysis Lab\Day 6
+
+	None of the text printed in my terminal is a different color (with the exception of Errors)
+
+# Exercise 2.2
+
+	Inputting 'sl ..' moved my working directory up a level - from 'D:\Code\Data Analysis Lab\Day 6'
+	to 'D:\Data Analysis Lab'.
+
+	I returned to my original working directory by simply inputting "sl 'Day 6'" (Where the new path
+	is specified relative to the current wd). Alternatively, I could have used "sl 'D:\Code\Data Analysis Lab\Day 6'"
+
+	I used "sl shell_magic" (now without internal quotes because my path no longer has any spaces).
+
+# Exercise 3.1
+
+	Inputting 'ni hello world' returns an error message, likely due to the fact that the ni command tries to process 
+	'world' as a separate (positional) argument from 'hello'. This implies that we should probably stay away from 
+	naming files with spaces.
+
+# Exercise 3.2
+
+	I used 'New-Item -Name hello_world -ItemType directory'.
+
+# Exercise 3.3
+
+	Creating an empty file called hello_world in shell_magic likely failed because there is already an item in that
+	directory with that name.
+
+	ni hello_world.bfe
+	Rename-Item hello_world.bfe hello_world.txt
+
+	Move-Item -Path hello_world.txt -Destination  'hello_world\'
+
+	Move-Item -Path hello_world\hello_world.txt -Destination  'D:\Code\Data Analysis Lab\Day 6\shell_magic'
+
+	sl hello_world
+
+# Exercise 3.4
+
+	Moving removes the file from its original directory and places it in the destination directory specified 
+	by the user. Copying preserves the original file (in the original directory), and places a copy of the same
+	file in the destination directory.
+
+	cp -Path ..\hello_world.txt -Destination .\hello_world.txt
+
+	cp -Path ..\hello_world.txt -Destination .\world_hello.txt
+
+# Exercise 3.5
+
+	sl ..
+
+	rm hello_world.txt
+
+	rm .\hello_world\hello_world.txt
+
+	"The item at D:\Code\Data Analysis Lab\Day 6\shell_magic\hello_world\ has children and the Recurse
+	parameter was not specified. If you continue, all children will be removed with the item. Are you sure
+	you want to continue?"
+
+	rm -Path .\hello_world\ -Recurse
+
+# Exercise 4.1
+	
+	Inputting 'gc hello_world.txt' does not return anything, as hello_world.txt is an empty text file.
+
+# Exercise 4.2
+
+	Write-Output sends specified objects to the next command in the pipeline, or, if the command is the last
+	command in the pipeline, the objects specified are displayed in the console.
+
+	echo 'file contents' > file.txt
+	gc file.txt
+
+	echo 'more contents' >> file.txt
+	gc file.txt
+
+# Exercise 4.3
+
+	ls 'C:\Users\brand\' -Recurse > home_contents.list
+
+	'| oh -p' might be nice when dealing with a file that contains large amounts of info. Being able to view
+	the file's contents in pages avoids cluttering the console.
+
+# Exercise 5.1
+
+	Measure-Object returns the numeric properties of objects, and the characters, words, and lines in string 
+	objects
+
+	Inputting 'Measure-Object file.txt' returns nothing.
+
+	gc file.txt | measure -Word
+
+	Here, Get-Content sends its output to the Measure-Object command. In the previous command (| oh -p), the
+	contents of home_contents.list are retrieved by Get-Content and passed to Out-Host, which passes the content
+	to the command line (now in pages).
+
+	'ls | measure' returns 'Count: 2'
+
+# Exercise 5.2
+
+	echo 'hello world' > helloworld.txt
+	echo 'world hello' >> helloworld.txt
+
+	sls -Path helloworld.txt -Pattern 'world'
+
+	echo 'world hello' > worldhello.txt
+	sls -Path *.txt -Pattern 'hello'
+	Output:
+		helloworld.txt:1:hello world
+		helloworld.txt:2:world hello
+		worldhello.txt:1:world hello
+
+	Get-ChildItem returns columns for Mode, LastWriteTime, Length. I found this out by inputting 'ls' into my
+	console.
+
+# Exercise 5.3
+
+	sls -Path 'helloworld.txt' -Pattern 'hello'
+
+	gc helloworld.txt | sls 'world' | measure | select Count | oh -p
+
+# Exercise 6.1
+
+	curl -URI http://cli.ucudata.nl/aup.tar.gz -OutFile
+
+# Exercise 6.2
+
+	tar -xf aup.tar.gz
+
+# Exercise 6.3
+
+	ls -Path aup -Filter *.aup -Recurse
+	
+	The maximum depth is 2 subdirectories below '.\aup\'.
+	Output:
+		Directory: D:\Code\Data Analysis Lab\Day 6\shell_magic\aup\cohort3\s274fhum
+
+
+		Mode                LastWriteTime         Length Name
+		----                -------------         ------ ----
+		-a----        10/8/2012   9:48 PM         350009 s274fhum.aup
+
+	gc 'D:\Code\Data Analysis Lab\Day 6\shell_magic\aup\cohort1\s001f\s001f1.aup' | oh -p
+
+	There are 964 *.aup files stored in the .\aup\ directory.
+	ls -Path aup -Filter *.aup -Recurse | measure
+
+# Exercise 6.4
+
+	curl -URI https://en.wikipedia.org/wiki/List_of_number-one_songs_in_Norway -OutFile 'Norway.html'
+	gc .\Norway.html
+
+	$Page | sls 1995	
